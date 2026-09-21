@@ -1,0 +1,18 @@
+[
+  {
+    "benchmark": "spec_21_csrng",
+    "path": "c_first",
+    "reason": "LLM Tier-2 decision (Tier-1 was uncertain: Subcategory 'protocol' is not in the RAG knowledge base; no prior transform success data \u2014 requires LLM judgment.)",
+    "rule_fired": "tier2_llm",
+    "confidence": "medium",
+    "optimization_target": "AREA",
+    "llm_reasoning": "Single-clock FSM with arithmetic, bitwise, and memory operations on wide 128-bit data is well-suited for C-level transforms that can aggressively optimize bit-widths, operator strength reduction, and memory access patterns before HLS synthesis. The flat hierarchy and protocol handler sub-pattern indicate control logic that HLS can schedule efficiently, while C-level dead code elimination and constant propagation will yield better area reduction than direct RTL transforms on this complex design.",
+    "tier": 2,
+    "token_usage": {
+      "prompt_tokens": 397,
+      "completion_tokens": 109,
+      "retries": 0,
+      "total_tokens": 506
+    }
+  }
+]

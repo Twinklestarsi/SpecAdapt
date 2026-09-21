@@ -1,0 +1,18 @@
+[
+  {
+    "benchmark": "spec_21_csrng",
+    "path": "c_first",
+    "reason": "Design has explicit data-processing behavior; C can regularize the behavioral semantics before RTL generation.",
+    "rule_fired": "data_processing",
+    "confidence": "high",
+    "optimization_target": "AREA",
+    "llm_reasoning": "",
+    "tier": 1,
+    "token_usage": {
+      "prompt_tokens": 0,
+      "completion_tokens": 0,
+      "retries": 0,
+      "total_tokens": 0
+    }
+  }
+]

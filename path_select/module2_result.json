@@ -1,0 +1,210 @@
+[
+  {
+    "benchmark": "spec_1_NV_NVDLA_BDMA_csb",
+    "path": "c_first",
+    "reason": "Design has explicit data-processing behavior; C can regularize the behavioral semantics before RTL generation.",
+    "rule_fired": "data_processing",
+    "confidence": "high",
+    "optimization_target": "AREA",
+    "llm_reasoning": "",
+    "tier": 1,
+    "token_usage": {
+      "prompt_tokens": 0,
+      "completion_tokens": 0,
+      "retries": 0,
+      "total_tokens": 0
+    }
+  },
+  {
+    "benchmark": "spec_2_NV_NVDLA_CDMA_status",
+    "path": "c_first",
+    "reason": "Design has explicit data-processing behavior; C can regularize the behavioral semantics before RTL generation.",
+    "rule_fired": "data_processing",
+    "confidence": "high",
+    "optimization_target": "TIMING",
+    "llm_reasoning": "",
+    "tier": 1,
+    "token_usage": {
+      "prompt_tokens": 0,
+      "completion_tokens": 0,
+      "retries": 0,
+      "total_tokens": 0
+    }
+  },
+  {
+    "benchmark": "spec_3_NV_NVDLA_CDMA_dma_mux",
+    "path": "c_first",
+    "reason": "Design has explicit data-processing behavior; C can regularize the behavioral semantics before RTL generation.",
+    "rule_fired": "data_processing",
+    "confidence": "high",
+    "optimization_target": "TIMING",
+    "llm_reasoning": "",
+    "tier": 1,
+    "token_usage": {
+      "prompt_tokens": 0,
+      "completion_tokens": 0,
+      "retries": 0,
+      "total_tokens": 0
+    }
+  },
+  {
+    "benchmark": "spec_4_NV_NVDLA_GLB_ic",
+    "path": "c_first",
+    "reason": "Design has 2 clock domains; C behavioral modeling can weaken clock-domain and CDC semantics.",
+    "rule_fired": "multi_clock_protection",
+    "confidence": "high",
+    "optimization_target": "TIMING",
+    "llm_reasoning": "",
+    "tier": 1,
+    "token_usage": {
+      "prompt_tokens": 0,
+      "completion_tokens": 0,
+      "retries": 0,
+      "total_tokens": 0
+    }
+  },
+  {
+    "benchmark": "spec_4_NV_NVDLA_GLB_csb",
+    "path": "c_first",
+    "reason": "Design has explicit data-processing behavior; C can regularize the behavioral semantics before RTL generation.",
+    "rule_fired": "data_processing",
+    "confidence": "high",
+    "optimization_target": "TIMING",
+    "llm_reasoning": "",
+    "tier": 1,
+    "token_usage": {
+      "prompt_tokens": 0,
+      "completion_tokens": 0,
+      "retries": 0,
+      "total_tokens": 0
+    }
+  },
+  {
+    "benchmark": "spec_5_NV_NVDLA_CDMA_IMG_ctrl",
+    "path": "c_first",
+    "reason": "Design has 2 clock domains; C behavioral modeling can weaken clock-domain and CDC semantics.",
+    "rule_fired": "multi_clock_protection",
+    "confidence": "high",
+    "optimization_target": "AREA",
+    "llm_reasoning": "",
+    "tier": 1,
+    "token_usage": {
+      "prompt_tokens": 0,
+      "completion_tokens": 0,
+      "retries": 0,
+      "total_tokens": 0
+    }
+  },
+  {
+    "benchmark": "spec_6_NV_NVDLA_CDMA_WT_wrr_arb",
+    "path": "c_first",
+    "reason": "Design has explicit data-processing behavior; C can regularize the behavioral semantics before RTL generation.",
+    "rule_fired": "data_processing",
+    "confidence": "high",
+    "optimization_target": "AREA",
+    "llm_reasoning": "",
+    "tier": 1,
+    "token_usage": {
+      "prompt_tokens": 0,
+      "completion_tokens": 0,
+      "retries": 0,
+      "total_tokens": 0
+    }
+  },
+  {
+    "benchmark": "spec_7_NV_NVDLA_apb2csb",
+    "path": "c_first",
+    "reason": "Design has explicit data-processing behavior; C can regularize the behavioral semantics before RTL generation.",
+    "rule_fired": "data_processing",
+    "confidence": "high",
+    "optimization_target": "AREA",
+    "llm_reasoning": "",
+    "tier": 1,
+    "token_usage": {
+      "prompt_tokens": 0,
+      "completion_tokens": 0,
+      "retries": 0,
+      "total_tokens": 0
+    }
+  },
+  {
+    "benchmark": "spec_9_NV_NVDLA_CDMA_IMG_sg",
+    "path": "c_first",
+    "reason": "Design has explicit data-processing behavior; C can regularize the behavioral semantics before RTL generation.",
+    "rule_fired": "data_processing",
+    "confidence": "high",
+    "optimization_target": "TIMING",
+    "llm_reasoning": "",
+    "tier": 1,
+    "token_usage": {
+      "prompt_tokens": 0,
+      "completion_tokens": 0,
+      "retries": 0,
+      "total_tokens": 0
+    }
+  },
+  {
+    "benchmark": "spec_10_NV_NVDLA_CDMA_IMG_pack",
+    "path": "c_first",
+    "reason": "Design has explicit data-processing behavior; C can regularize the behavioral semantics before RTL generation.",
+    "rule_fired": "data_processing",
+    "confidence": "high",
+    "optimization_target": "TIMING",
+    "llm_reasoning": "",
+    "tier": 1,
+    "token_usage": {
+      "prompt_tokens": 0,
+      "completion_tokens": 0,
+      "retries": 0,
+      "total_tokens": 0
+    }
+  },
+  {
+    "benchmark": "spec_11_NV_NVDLA_CDMA_img",
+    "path": "c_first",
+    "reason": "Design has explicit data-processing behavior; C can regularize the behavioral semantics before RTL generation.",
+    "rule_fired": "data_processing",
+    "confidence": "high",
+    "optimization_target": "AREA",
+    "llm_reasoning": "",
+    "tier": 1,
+    "token_usage": {
+      "prompt_tokens": 0,
+      "completion_tokens": 0,
+      "retries": 0,
+      "total_tokens": 0
+    }
+  },
+  {
+    "benchmark": "spec_12_NV_NVDLA_CDMA_wt",
+    "path": "c_first",
+    "reason": "Design has 2 clock domains; C behavioral modeling can weaken clock-domain and CDC semantics.",
+    "rule_fired": "multi_clock_protection",
+    "confidence": "high",
+    "optimization_target": "TIMING",
+    "llm_reasoning": "",
+    "tier": 1,
+    "token_usage": {
+      "prompt_tokens": 0,
+      "completion_tokens": 0,
+      "retries": 0,
+      "total_tokens": 0
+    }
+  },
+    {
+      "benchmark": "spec_21_csrng",
+      "path": "c_first",
+      "reason": "Design has explicit data-processing behavior; C can regularize the behavioral semantics before RTL generation.",
+      "rule_fired": "data_processing",
+      "confidence": "high",
+      "optimization_target": "AREA",
+      "llm_reasoning": "",
+      "tier": 1,
+      "token_usage": {
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "retries": 0,
+        "total_tokens": 0
+      }
+    }
+]
