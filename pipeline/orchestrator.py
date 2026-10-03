@@ -95,9 +95,10 @@ class PipelineOrchestrator:
     ) -> PipelineResult:
         if experiment_group != "optimized":
             raise ValueError(f"Unsupported experiment group: {experiment_group}")
-        if module5_backend != "direct_rtl":
+        if module5_backend not in {"direct_rtl", "hls"}:
             raise ValueError(
-                "The active C-first route uses the AI direct_rtl backend"
+                "Unsupported Module 5 backend: "
+                f"{module5_backend}. Choose direct_rtl or hls."
             )
         if mcts_iterations < 1 or mcts_max_depth < 1 or mcts_candidate_limit < 1:
             raise ValueError("MCTS iterations, depth, and candidate limit must be positive")

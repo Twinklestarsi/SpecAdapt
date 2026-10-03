@@ -37,15 +37,17 @@ def _parse_args() -> argparse.Namespace:
     parser.add_argument("--module5-output-root", default=None)
     parser.add_argument(
         "--backend",
-        choices=["direct_rtl"],
+        choices=["direct_rtl", "hls"],
         default="direct_rtl",
-        help="AI C-to-RTL backend used after C-first optimization",
+        help=(
+            "C-to-RTL backend used after C-first optimization: direct_rtl or hls"
+        ),
     )
     parser.add_argument(
         "--experiment-group",
         choices=["optimized"],
         default="optimized",
-        help="AI RTL pipeline group; Vitis HLS is not used",
+        help="AI RTL pipeline group",
     )
     parser.add_argument("--module4-top-k", type=int, default=5)
     parser.add_argument("--mcts-iterations", type=int, default=240)
@@ -69,7 +71,8 @@ def _parse_args() -> argparse.Namespace:
         choices=("jaspergold", "none"),
         default="jaspergold",
         help=(
-            "jaspergold (default): syntax -> JG equivalence with feedback retry -> DC; "
+            "jaspergold (default): syntax -> JG equivalence -> DC; "
+            "direct_rtl may retry after JG feedback, while hls uses zero JG retries; "
             "none: syntax -> DC WITHOUT equivalence verification. "
             "'none' leaves correctness_status unverified, so its runs must not be "
             "used as adaptive-router training labels."

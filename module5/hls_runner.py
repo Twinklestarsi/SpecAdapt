@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import os
 import shlex
 import shutil
 import subprocess
@@ -23,6 +24,74 @@ from verilogc2x import check_synthesizable, infer_hls_top_from_cpp_path, write_h
 
 
 VITIS_ENV_SCRIPT = PROJECT_ROOT / "vitis.sh"
+
+
+def _resolve_vitis_command() -> tuple[list[str] | None, str, str]:
+    """Resolve a safe Vitis invocation without assuming a private checkout.
+
+    Returns ``(command, status, error)``.  A configured environment script is
+    sourced with a shell-quoted path.  Without one, a legacy project-root
+    ``vitis.sh`` is used when present; otherwise ``v++`` is resolved directly
+    from ``PATH``.
+    """
+    configured = os.environ.get("VITIS_ENV_SCRIPT", "").strip()
+    script: Path | None = None
+    if configured:
+        script = Path(configured).expanduser()
+        if not script.is_file():
+            return (
+                None,
+                "vitis_env_script_missing",
+                f"VITIS_ENV_SCRIPT does not point to a readable file: {script}",
+            )
+        if not os.access(script, os.R_OK):
+            return (
+                None,
+                "vitis_env_script_unreadable",
+                f"VITIS_ENV_SCRIPT is not readable: {script}",
+            )
+    elif VITIS_ENV_SCRIPT.is_file() and os.access(VITIS_ENV_SCRIPT, os.R_OK):
+        script = VITIS_ENV_SCRIPT
+
+    compile_args = [
+        "v++",
+        "-c",
+        "--mode",
+        "hls",
+        "--config",
+        "./hls_config.cfg",
+        "--work_dir",
+        "./hls_work",
+    ]
+    if script is None:
+        vpp = shutil.which("v++")
+        if vpp is None:
+            return (
+                None,
+                "vitis_not_found",
+                "Vitis compiler 'v++' was not found on PATH. Set "
+                "VITIS_ENV_SCRIPT to a readable Vitis settings script or add "
+                "v++ to PATH.",
+            )
+        return [vpp, *compile_args[1:]], "", ""
+
+    bash = shutil.which("bash")
+    if bash is None:
+        return (
+            None,
+            "bash_not_found",
+            "bash is required to source VITIS_ENV_SCRIPT before running v++.",
+        )
+    quoted_script = shlex.quote(str(script.resolve()))
+    shell_command = (
+        "set -e; "
+        f"source {quoted_script}; "
+        "if ! command -v v++ >/dev/null 2>&1; then "
+        "echo \"Vitis compiler 'v++' was not found after sourcing the "
+        "configured environment script.\" >&2; exit 127; fi; "
+        "exec v++ -c --mode hls --config ./hls_config.cfg --work_dir ./hls_work"
+    )
+    return [bash, "-c", shell_command], "", ""
 
 
 def _collect_verilog_files(root: Path) -> List[Path]:
@@ -162,6 +231,18 @@ def run_hls(
             "public_top": public_top_name or selected_top,
             "interface_policy": {"c": c_policy, "c_contract": c_contract},
         }
+    vitis_command, vitis_status, vitis_error = _resolve_vitis_command()
+    if vitis_command is None:
+        return {
+            "success": False,
+            "status": vitis_status or "vitis_not_found",
+            "stdout": "",
+            "stderr": vitis_error,
+            "generated_verilog_path": "",
+            "generated_verilog_files": [],
+            "manifest_path": "",
+            "top_selected": selected_top,
+        }
     src_stem = c_path.stem
     dest_hls_dir = out_dir / f"hls_{src_stem}"
     if dest_hls_dir.exists():
@@ -187,13 +268,9 @@ def run_hls(
 
         stdout_path = tmp_hls_dir / "vpp_stdout.txt"
         stderr_path = tmp_hls_dir / "vpp_stderr.txt"
-        shell_cmd = (
-            f"source {shlex.quote(str(VITIS_ENV_SCRIPT))} && "
-            "v++ -c --mode hls --config ./hls_config.cfg --work_dir ./hls_work"
-        )
         with stdout_path.open("w", encoding="utf-8") as out, stderr_path.open("w", encoding="utf-8") as err:
             proc = subprocess.run(
-                ["bash", "-lc", shell_cmd],
+                vitis_command,
                 cwd=str(tmp_hls_dir),
                 stdout=out,
                 stderr=err,

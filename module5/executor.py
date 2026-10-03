@@ -29,6 +29,17 @@ def _is_hls_backend(backend: str) -> bool:
     return backend in _HLS_BACKENDS
 
 
+def _jg_retry_budget(backend: str, requested: int) -> int:
+    """Return the formal retry budget for a backend.
+
+    HLS produces a canonical RTL artifact that must be checked as emitted.
+    Keeping its budget at zero prevents JasperGold feedback from sending that
+    artifact through an LLM rewrite.  The direct RTL route retains its caller's
+    retry budget.
+    """
+    return 0 if _is_hls_backend(backend) else requested
+
+
 def _effective_verification_mode(
     verification_mode: str,
     *,
@@ -211,6 +222,25 @@ def _evaluate_candidate(
                 "failed_preconditions": [],
                 "artifact": artifact,
             }
+        if backend == "hls":
+            generated_path = Path(str(artifact.get("generated_verilog_path", "")))
+            generated_files = [
+                Path(str(path))
+                for path in (artifact.get("generated_verilog_files") or [])
+                if str(path)
+            ]
+            if (
+                not generated_path.is_file()
+                or len(generated_files) != 1
+                or generated_files[0].resolve() != generated_path.resolve()
+            ):
+                artifact["verified"] = False
+                return {
+                    "status": "hls_failed",
+                    "validator_summary": validation,
+                    "failed_preconditions": ["hls_noncanonical_output"],
+                    "artifact": artifact,
+                }
     elif backend == "direct_rtl":
         spec_context = spec_context or {}
         rtl_dir = work_dir / f"{candidate_name}_rtl"
@@ -248,6 +278,7 @@ def _evaluate_candidate(
     pre_dc_verification: Dict[str, Any] = {
         "status": "not_run",
         "equivalent": None,
+        "verified": False,
         "method": "none",
         "verification_mode": "none",
         "reason": "syntax_then_dc_without_equivalence",
@@ -256,7 +287,7 @@ def _evaluate_candidate(
     jg_attempts: List[Dict[str, Any]] = []
     eval_token_usage = list(artifact.get("llm_token_usage", [])) if isinstance(artifact, dict) else []
     for dc_attempt in range(dc_max_retries + 1):
-        if verification_mode == "jaspergold" and backend == "direct_rtl":
+        if verification_mode == "jaspergold":
             source_context = (
                 "Specification:\n"
                 + str((spec_context or {}).get("spec_text", ""))
@@ -288,7 +319,10 @@ def _evaluate_candidate(
                 golden_top=pre_dc_golden_top,
                 design_type=pre_dc_design_type,
                 verification_timeout=pre_dc_verification_timeout,
-                max_retries=jg_max_retries,
+                max_retries=_jg_retry_budget(backend, jg_max_retries),
+            )
+            pre_dc_verification["verified"] = (
+                str(pre_dc_verification.get("status") or "") == "passed"
             )
             jg_retry_count += int(pre_dc_verification.get("retry_count", 0) or 0)
             jg_attempts.extend(list(pre_dc_verification.get("attempts") or []))
@@ -302,6 +336,8 @@ def _evaluate_candidate(
             if final_candidate:
                 artifact["generated_verilog_path"] = final_candidate
             if str(pre_dc_verification.get("status") or "") != "passed":
+                artifact["verified"] = False
+                artifact["jg_verification"] = pre_dc_verification
                 return {
                     "status": "equivalence_failed",
                     "validator_summary": validation,
